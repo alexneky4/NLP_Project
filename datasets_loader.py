@@ -75,3 +75,39 @@ def get_train_data_b(
             })
 
     return data
+
+def get_test_data_a(
+        base_dir: str = ".",
+) -> List[Dict]:
+    base = Path(base_dir)
+
+    path = base / "test_data" / "test_track_a.jsonl"
+
+    data = []
+
+    for item in _load_jsonl(path):
+        data.append({
+            "anchor_text": item["anchor_text"],
+            "text_a": item["text_a"],
+            "text_b": item["text_b"],
+            "text_a_is_closer": item["text_a_is_closer"],
+        })
+
+    return data
+
+
+def get_test_data_b(
+        base_dir: str = ".",
+) -> List[Dict]:
+    base = Path(base_dir)
+
+    path = base / "test_data" / "test_track_b.jsonl"
+
+    data = []
+
+    for item in _load_jsonl(path):
+        data.append({
+            "text": item["text"]
+        })
+
+    return data

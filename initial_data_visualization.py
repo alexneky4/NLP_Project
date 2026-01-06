@@ -67,20 +67,21 @@ def plot_track_a_label_distribution(data_a):
 
 
 if __name__ == "__main__":
-    data_a = get_train_data_a(use_synthetic=False)
+    data_a = get_train_data_a(use_synthetic=True)
     data_b = get_train_data_b()
 
     all_texts = []
 
     for item in data_a:
-        all_texts.extend([
-            item["anchor_text"],
-            item["text_a"],
-            item["text_b"],
-        ])
+        for key in ("anchor_text", "text_a", "text_b"):
+            text = item.get(key)
+            if isinstance(text, str) and text.strip():
+                all_texts.append(text)
 
     for item in data_b:
-        all_texts.append(item["text"])
+        text = item.get("text")
+        if isinstance(text, str) and text.strip():
+            all_texts.append(text)
 
     print(f"[INFO] Total number of texts: {len(all_texts)}")
 
