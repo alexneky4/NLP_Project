@@ -1,6 +1,7 @@
 import random
 import torch
 from pathlib import Path
+import json
 from typing import List
 
 from sentence_transformers import CrossEncoder, InputExample
@@ -136,6 +137,36 @@ def evaluate_cross_encoder(model, test_data):
         diff_threshold=0.03,
     )
 
+def write_dev_track_a_jsonl(
+    model,
+    dev_data,
+    output_path: str = "track_a.jsonl",
+):
+    with open(output_path, "w", encoding="utf-8") as f:
+        for item in dev_data:
+            anchor = item["anchor_text"]
+            text_a = item["text_a"]
+            text_b = item["text_b"]
+
+            scores = model.predict([
+                [anchor, text_a],
+                [anchor, text_b],
+            ])
+
+            pred = bool(scores[0] > scores[1])
+
+            out = {
+                "anchor_text": anchor,
+                "text_a": text_a,
+                "text_b": text_b,
+                "text_a_is_closer": pred,
+            }
+
+            f.write(json.dumps(out) + "\n")
+
+    print(f"[INFO] Dev Track A JSONL written to: {output_path}")
+
+
 
 if __name__ == "__main__":
     print("[INFO] Using device:", DEVICE)
@@ -163,3 +194,18 @@ if __name__ == "__main__":
 
     print("[INFO] Evaluating model...")
     evaluate_cross_encoder(model, test_data)
+
+    # print("[INFO] Loading trained Cross-Encoder...")
+    # model = CrossEncoder(str(OUTPUT_DIR), device=DEVICE)
+    #
+    # print("[INFO] Loading dev Track A data (order preserved)...")
+    # from datasets_loader import get_dev_data_a
+    # dev_data = get_dev_data_a()
+    #
+    # print("[INFO] Writing dev Track A JSONL file...")
+    # write_dev_track_a_jsonl(
+    #     model=model,
+    #     dev_data=dev_data,
+    #     output_path="track_a.jsonl",
+    # )
+

@@ -111,3 +111,22 @@ def get_test_data_b(
         })
 
     return data
+
+def get_dev_data_a(
+        base_dir: str = ".",
+) -> List[Dict]:
+    base = Path(base_dir)
+    path = base / "development_data" / "dev_track_a.jsonl"
+
+    data = []
+
+    for item in _load_jsonl(path):
+        data.append({
+            "anchor_text": item["anchor_text"],
+            "text_a": item["text_a"],
+            "text_b": item["text_b"],
+            "text_a_is_closer": item["text_a_is_closer"],
+        })
+
+    return data
+

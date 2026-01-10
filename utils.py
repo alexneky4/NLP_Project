@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import List, Dict
-
+import json
 
 def plot_test_result_matrix(
     y_true: List[bool],
@@ -86,4 +86,25 @@ def inspect_near_miss_errors(
         print("\nTEXT B:\n", r["text_b"])
         print()
 
+
+def write_track_a_submission(
+    data: List[Dict],
+    predictions: List[bool],
+    output_path: str = "track_a.jsonl",
+):
+    assert len(data) == len(predictions), (
+        "Data and predictions must have the same length"
+    )
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        for item, pred in zip(data, predictions):
+            out = {
+                "anchor_text": item["anchor_text"],
+                "text_a": item["text_a"],
+                "text_b": item["text_b"],
+                "text_a_is_closer": bool(pred),
+            }
+            f.write(json.dumps(out) + "\n")
+
+    print(f"[INFO] Track A submission file written to: {output_path}")
 
