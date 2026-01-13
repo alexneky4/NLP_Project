@@ -147,92 +147,6 @@ def visualize_embeddings(embeddings: np.ndarray, name: str):
     print(f"[INFO] Saved plot: {plot_path}")
 
 
-# === Evaluation on Track A triplets ===
-
-def cos_sim(a: np.ndarray, b: np.ndarray) -> float:
-    """Compute cosine similarity between two vectors."""
-    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
-
-
-def evaluate_on_track_a(model: SentenceTransformer, data: list[dict], output_path: str):
-    """
-    Evaluate Track B embeddings using Track A triplets.
-    For each triplet, check if cosine similarity correctly predicts which text is closer.
-    """
-    y_true = []
-    y_pred = []
-    
-    print("[INFO] Evaluating embeddings on Track A triplets...")
-    
-    for item in data:
-        anchor = (item.get("anchor_text") or "").strip()
-        text_a = (item.get("text_a") or "").strip()
-        text_b = (item.get("text_b") or "").strip()
-        label = item.get("text_a_is_closer")
-        
-        if not all([anchor, text_a, text_b]) or label is None:
-            continue
-        
-        # Encode independently (as required by Track B rules)
-        emb_anchor = model.encode(anchor, convert_to_numpy=True)
-        emb_a = model.encode(text_a, convert_to_numpy=True)
-        emb_b = model.encode(text_b, convert_to_numpy=True)
-        
-        # Predict based on cosine similarity
-        sim_a = cos_sim(emb_anchor, emb_a)
-        sim_b = cos_sim(emb_anchor, emb_b)
-        pred = sim_a > sim_b
-        
-        y_true.append(label)
-        y_pred.append(pred)
-    
-    # Compute accuracy
-    accuracy = sum(t == p for t, p in zip(y_true, y_pred)) / len(y_true)
-    print(f"[RESULT] Track B embeddings accuracy on Track A: {accuracy:.4f}")
-    
-    # Plot confusion matrix
-    plot_track_b_confusion_matrix(y_true, y_pred, output_path)
-    
-    return accuracy
-
-
-def plot_track_b_confusion_matrix(y_true: list, y_pred: list, output_path: str):
-    """Plot confusion matrix for Track B evaluation."""
-    PLOTS_DIR.mkdir(parents=True, exist_ok=True)
-    
-    tp = sum(t and p for t, p in zip(y_true, y_pred))
-    tn = sum((not t) and (not p) for t, p in zip(y_true, y_pred))
-    fp = sum((not t) and p for t, p in zip(y_true, y_pred))
-    fn = sum(t and (not p) for t, p in zip(y_true, y_pred))
-    
-    total = len(y_true)
-    matrix = np.array([[tp, fn], [fp, tn]], dtype=float)
-    matrix_perc = 100 * matrix / total
-    
-    fig, ax = plt.subplots(figsize=(5, 4))
-    im = ax.imshow(matrix_perc, cmap="Blues")
-    
-    ax.set_xticks([0, 1])
-    ax.set_yticks([0, 1])
-    ax.set_xticklabels(["Pred: A closer", "Pred: B closer"])
-    ax.set_yticklabels(["True: A closer", "True: B closer"])
-    
-    for i in range(2):
-        for j in range(2):
-            ax.text(j, i, f"{matrix_perc[i, j]:.1f}%",
-                    ha="center", va="center", color="black", fontsize=12)
-    
-    ax.set_title("Track B Embeddings – Evaluation on Track A (%)")
-    plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-    
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=300)
-    plt.close()
-    
-    print(f"[INFO] Confusion matrix saved to: {output_path}")
-    print(f"TP: {tp}, FP: {fp}, FN: {fn}, TN: {tn}")
-
-
 # === Main ===
 
 if __name__ == "__main__":
@@ -267,10 +181,5 @@ if __name__ == "__main__":
     # Step 5: Visualize
     visualize_embeddings(train_emb, "train")
     visualize_embeddings(test_emb, "test")
-
-    # Step 6: Evaluate on Track A dev data (test data has no labels)
-    print("[INFO] Evaluating on Track A dev triplets...")
-    dev_data_a = get_train_data_a(base_dir="..", use_synthetic=False)
-    evaluate_on_track_a(model, dev_data_a, str(PLOTS_DIR / "track_b_confusion_matrix.png"))
 
     print("[INFO] Done!")
