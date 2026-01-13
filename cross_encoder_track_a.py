@@ -172,40 +172,40 @@ if __name__ == "__main__":
     print("[INFO] Using device:", DEVICE)
     random.seed(SEED)
 
-    print("[INFO] Loading Track A data...")
-    data = get_train_data_a(use_synthetic=True)
-    random.shuffle(data)
-
-    split_idx = int(TRAIN_SPLIT * len(data))
-    train_data = data[:split_idx]
-    test_data = data[split_idx:]
-
-    print(f"[INFO] Train samples: {len(train_data)}")
-    print(f"[INFO] Test samples : {len(test_data)}")
-
-    model = fine_tune_cross_encoder(
-        train_data=train_data,
-        model_name=MODEL_NAME,
-        output_dir=OUTPUT_DIR,
-        batch_size=BATCH_SIZE,
-        epochs=EPOCHS,
-        device=DEVICE,
-    )
-
-    print("[INFO] Evaluating model...")
-    evaluate_cross_encoder(model, test_data)
-
-    # print("[INFO] Loading trained Cross-Encoder...")
-    # model = CrossEncoder(str(OUTPUT_DIR), device=DEVICE)
+    # print("[INFO] Loading Track A data...")
+    # data = get_train_data_a(use_synthetic=True)
+    # random.shuffle(data)
     #
-    # print("[INFO] Loading dev Track A data (order preserved)...")
-    # from datasets_loader import get_dev_data_a
-    # dev_data = get_dev_data_a()
+    # split_idx = int(TRAIN_SPLIT * len(data))
+    # train_data = data[:split_idx]
+    # test_data = data[split_idx:]
     #
-    # print("[INFO] Writing dev Track A JSONL file...")
-    # write_dev_track_a_jsonl(
-    #     model=model,
-    #     dev_data=dev_data,
-    #     output_path="track_a.jsonl",
+    # print(f"[INFO] Train samples: {len(train_data)}")
+    # print(f"[INFO] Test samples : {len(test_data)}")
+    #
+    # model = fine_tune_cross_encoder(
+    #     train_data=train_data,
+    #     model_name=MODEL_NAME,
+    #     output_dir=OUTPUT_DIR,
+    #     batch_size=BATCH_SIZE,
+    #     epochs=EPOCHS,
+    #     device=DEVICE,
     # )
+    #
+    # print("[INFO] Evaluating model...")
+    # evaluate_cross_encoder(model, test_data)
+
+    print("[INFO] Loading trained Cross-Encoder...")
+    model = CrossEncoder(str(OUTPUT_DIR), device=DEVICE)
+
+    print("[INFO] Loading dev Track A data (order preserved)...")
+    from datasets_loader import get_dev_data_a
+    dev_data = get_dev_data_a()
+
+    print("[INFO] Writing dev Track A JSONL file...")
+    write_dev_track_a_jsonl(
+        model=model,
+        dev_data=dev_data,
+        output_path="track_a.jsonl",
+    )
 
