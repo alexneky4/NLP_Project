@@ -76,6 +76,7 @@ def get_train_data_b(
 
     return data
 
+
 def get_test_data_a(
         base_dir: str = ".",
 ) -> List[Dict]:
