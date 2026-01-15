@@ -6,7 +6,7 @@ from datasets_loader import get_train_data_a
 from utils import plot_test_result_matrix, inspect_near_miss_errors
 
 MODEL_NAME = "sentence-transformers/all-mpnet-base-v2"
-USE_SYNTHETIC = False   # keep False for clean baseline
+USE_SYNTHETIC = False
 OUTPUT_CONFUSION_MATRIX = "sbert_track_a_confusion_matrix.png"
 
 
@@ -34,12 +34,10 @@ if __name__ == "__main__":
         text_b = item["text_b"]
         label = item["text_a_is_closer"]
 
-        # Encode
         emb_anchor = model.encode(anchor, convert_to_numpy=True)
         emb_a = model.encode(text_a, convert_to_numpy=True)
         emb_b = model.encode(text_b, convert_to_numpy=True)
 
-        # Similarities
         sim_a = cos_sim(emb_anchor, emb_a)
         sim_b = cos_sim(emb_anchor, emb_b)
 

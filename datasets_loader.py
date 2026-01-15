@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Dict
 
 
-def _load_jsonl(path: Path) -> List[Dict]:
+def _load_jsonl(path):
     if not path.exists():
         raise FileNotFoundError(f"File not found: {path}")
 
@@ -15,10 +15,7 @@ def _load_jsonl(path: Path) -> List[Dict]:
     return data
 
 
-def get_train_data_a(
-        base_dir: str = ".",
-        use_synthetic: bool = False,
-) -> List[Dict]:
+def get_train_data_a(base_dir,use_synthetic = False):
     base = Path(base_dir)
 
     paths = [
@@ -56,9 +53,7 @@ def get_train_data_a(
     return data
 
 
-def get_train_data_b(
-        base_dir: str = ".",
-) -> List[Dict]:
+def get_train_data_b(base_dir = "."):
     base = Path(base_dir)
 
     paths = [
@@ -77,9 +72,7 @@ def get_train_data_b(
     return data
 
 
-def get_test_data_a(
-        base_dir: str = ".",
-) -> List[Dict]:
+def get_test_data_a(base_dir: str = "."):
     base = Path(base_dir)
 
     path = base / "test_data" / "test_track_a.jsonl"
@@ -97,9 +90,7 @@ def get_test_data_a(
     return data
 
 
-def get_test_data_b(
-        base_dir: str = ".",
-) -> List[Dict]:
+def get_test_data_b(base_dir = ".") -> List[Dict]:
     base = Path(base_dir)
 
     path = base / "test_data" / "test_track_b.jsonl"
@@ -113,9 +104,7 @@ def get_test_data_b(
 
     return data
 
-def get_dev_data_a(
-        base_dir: str = ".",
-) -> List[Dict]:
+def get_dev_data_a(base_dir = "."):
     base = Path(base_dir)
     path = base / "development_data" / "dev_track_a.jsonl"
 

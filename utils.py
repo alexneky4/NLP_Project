@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 from typing import List, Dict
 import json
 
-import torch
-
 
 def plot_test_result_matrix(
     y_true: List[bool],

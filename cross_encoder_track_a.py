@@ -88,10 +88,6 @@ def fine_tune_cross_encoder(
 
 
 def evaluate_cross_encoder(model, test_data):
-    """
-    Evaluate a Cross-Encoder on Track A test data,
-    using confusion matrix and near-miss analysis.
-    """
     y_true = []
     y_pred = []
     records = []

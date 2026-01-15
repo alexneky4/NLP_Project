@@ -10,7 +10,6 @@ def count_tokens(text: str) -> int:
 
 
 def count_sentences(text: str) -> int:
-    # simple, robust sentence split
     return len([s for s in re.split(r"[.!?]\s+", text) if s.strip()])
 
 
